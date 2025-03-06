@@ -16,10 +16,9 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Specifications
         {
             // Arrange
             var user = ActiveUserSpecificationTestData.GenerateUser(status);
-            var specification = new ActiveUserSpecification();
 
             // Act
-            var result = specification.IsSatisfiedBy(user);
+            var result = UserSpecifications.IsSatisfiedBy(user);
 
             // Assert
             result.Should().Be(expectedResult);

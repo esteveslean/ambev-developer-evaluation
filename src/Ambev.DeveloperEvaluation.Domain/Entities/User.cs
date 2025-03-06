@@ -37,6 +37,9 @@ public class User : BaseEntity, IUser
     /// one lowercase letter, one number, and one special character.
     /// </summary>
     public string Password { get; set; } = string.Empty;
+    
+    public NameDTO Name { get; set; } = new ();
+    public AddressDTO Address { get; set; } = new();
 
     /// <summary>
     /// Gets the user's role in the system.
@@ -142,5 +145,31 @@ public class User : BaseEntity, IUser
     {
         Status = UserStatus.Suspended;
         UpdatedAt = DateTime.UtcNow;
+    }
+    
+    public void Update(string username, string phone, string email, string password, UserStatus status, UserRole role, NameDTO name, AddressDTO address)
+    {
+        //some B.O
+        
+        Username = username;
+        Phone = phone;
+        Email = email;
+        Password = password;
+        Status = status;
+        Role = role;
+        Name = name;
+        Address = address;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void NameToUpperCase()
+    {
+        Name.Firstname = string.Join(" ", Name.Firstname
+            .Split(' ')
+            .Select(word => char.ToUpper(word[0]) + word[1..].ToLower()));
+        
+        Name.Lastname = string.Join(" ", Name.Lastname
+            .Split(' ')
+            .Select(word => char.ToUpper(word[0]) + word[1..].ToLower()));
     }
 }

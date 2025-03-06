@@ -1,4 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Specifications;
+using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 
 namespace Ambev.DeveloperEvaluation.Domain.Repositories;
 
@@ -38,4 +40,14 @@ public interface IUserRepository
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>True if the user was deleted, false if not found</returns>
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+
+    Task<List<User>> ListAsync(BaseSpecification<User> spec, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Updates a user in the repository
+    /// </summary>
+    /// <param name="user">The user to update</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The updated user</returns>
+    Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default);
 }

@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Ambev.DeveloperEvaluation.Application;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
@@ -23,7 +25,11 @@ public class Program
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             builder.AddDefaultLogging();
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+                });
             builder.Services.AddEndpointsApiExplorer();
 
             builder.AddBasicHealthChecks();

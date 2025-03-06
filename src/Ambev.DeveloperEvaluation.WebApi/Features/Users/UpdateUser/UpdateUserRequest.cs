@@ -1,12 +1,9 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.UpdateUser;
 
-/// <summary>
-/// Represents a request to create a new user in the system.
-/// </summary>
-public class CreateUserRequest
+public class UpdateUserRequest
 {
     /// <summary>
     /// Gets or sets the username. Must be unique and contain only valid characters.
