@@ -1,12 +1,10 @@
-using Ambev.DeveloperEvaluation.Domain.Common;
+﻿using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.UpdateUser;
 
-/// <summary>
-/// API response model for CreateUser operation
-/// </summary>
-public class CreateUserResponse
+
+public class UpdateUserResponse
 {
     /// <summary>
     /// The unique identifier of the created user

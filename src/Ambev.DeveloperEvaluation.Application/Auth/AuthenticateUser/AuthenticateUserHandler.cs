@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Specifications;
@@ -28,21 +26,14 @@ namespace Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser
             var user = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
             
             if (user == null || !_passwordHasher.VerifyPassword(request.Password, user.Password))
-            {
                 throw new UnauthorizedAccessException("Invalid credentials");
-            }
-
-            var activeUserSpec = new ActiveUserSpecification();
-            if (!activeUserSpec.IsSatisfiedBy(user))
-            {
+           
+            if (!UserSpecifications.IsSatisfiedBy(user))
                 throw new UnauthorizedAccessException("User is not active");
-            }
-
-            var token = _jwtTokenGenerator.GenerateToken(user);
 
             return new AuthenticateUserResult
             {
-                Token = token,
+                Token = _jwtTokenGenerator.GenerateToken(user),
                 Email = user.Email,
                 Name = user.Username,
                 Role = user.Role.ToString()
