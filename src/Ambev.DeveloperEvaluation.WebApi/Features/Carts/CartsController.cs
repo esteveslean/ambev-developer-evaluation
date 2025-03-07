@@ -119,7 +119,7 @@ public class CartsController(IMediator mediator, IMapper mapper) : BaseControlle
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ApiResponseWithData<UpdateCartResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateProduct([FromRoute] Guid id, [FromBody] UpdateCartRequest request,
+    public async Task<IActionResult> UpdateCart([FromRoute] Guid id, [FromBody] UpdateCartRequest request,
         CancellationToken cancellationToken)
     {
         var validator = new UpdateCartValidator();
@@ -145,7 +145,7 @@ public class CartsController(IMediator mediator, IMapper mapper) : BaseControlle
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponseError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponseError), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteUser([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteCart([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var request = new DeleteCartRequest { Id = id };
         var validator = new DeleteCartValidator();
