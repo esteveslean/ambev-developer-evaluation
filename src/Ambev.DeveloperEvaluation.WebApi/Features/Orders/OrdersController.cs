@@ -1,10 +1,14 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Orders;
+using Ambev.DeveloperEvaluation.Application.Orders.CancelOrder;
+using Ambev.DeveloperEvaluation.Application.Orders.CancelOrderItem;
 using Ambev.DeveloperEvaluation.Application.Orders.DeleteOrder;
 using Ambev.DeveloperEvaluation.Application.Orders.GetOrder;
 using Ambev.DeveloperEvaluation.Application.Orders.ListOrders;
 using Ambev.DeveloperEvaluation.Application.Orders.UpdateOrder;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.ListCarts;
+using Ambev.DeveloperEvaluation.WebApi.Features.Orders.CancelOrder;
+using Ambev.DeveloperEvaluation.WebApi.Features.Orders.CancelOrderItem;
 using Ambev.DeveloperEvaluation.WebApi.Features.Orders.CreateOrder;
 using Ambev.DeveloperEvaluation.WebApi.Features.Orders.DeleteOrder;
 using Ambev.DeveloperEvaluation.WebApi.Features.Orders.GetOrder;
@@ -14,6 +18,9 @@ using AutoMapper;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using CancelOrderItemResponse = Ambev.DeveloperEvaluation.WebApi.Features.Orders.CancelOrderItem.CancelOrderItemResponse;
+using CancelOrderItemValidator = Ambev.DeveloperEvaluation.WebApi.Features.Orders.CancelOrderItem.CancelOrderItemValidator;
+using CancelOrderValidator = Ambev.DeveloperEvaluation.WebApi.Features.Orders.CancelOrder.CancelOrderValidator;
 using CreateOrderResponse = Ambev.DeveloperEvaluation.WebApi.Features.Orders.CreateOrder.CreateOrderResponse;
 using CreateOrderValidator = Ambev.DeveloperEvaluation.WebApi.Features.Orders.CreateOrder.CreateOrderValidator;
 using DeleteOrderValidator = Ambev.DeveloperEvaluation.WebApi.Features.Orders.DeleteOrder.DeleteOrderValidator;
@@ -162,5 +169,60 @@ public class OrdersController(IMediator mediator, IMapper mapper) : BaseControll
         var response = await mediator.Send(command, cancellationToken);
 
         return Ok(mapper.Map<UpdateOrderResponse>(response));
+    }
+    
+    [HttpPost("Cancel/{id}")]
+    [ProducesResponseType(typeof(ApiResponseWithData<CancelOrderResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponseError), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CancelOrder([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var request = new CancelOrderRequest { Id = id };
+        var validator = new CancelOrderValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(new ApiResponseError
+            {
+                Type = "Validation Error",
+                Error = "Invalid input data",
+                Detail = validationResult.Errors.FirstOrDefault()?.ErrorMessage ?? string.Empty
+            });
+
+        var command = mapper.Map<CancelOrderCommand>(request.Id);
+        var response = await mediator.Send(command, cancellationToken);
+
+        return Created(string.Empty, new ApiResponseWithData<CancelOrderResponse>
+        {
+            Success = true,
+            Message = "Order cancelled successfully",
+            Data = mapper.Map<CancelOrderResponse>(response)
+        });
+    }
+    
+    [HttpPost("Cancel/Item")]
+    [ProducesResponseType(typeof(ApiResponseWithData<CancelOrderItemResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponseError), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CancelOrderItem([FromBody] CancelOrderItemRequest request, CancellationToken cancellationToken)
+    {
+        var validator = new CancelOrderItemValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(new ApiResponseError
+            {
+                Type = "Validation Error",
+                Error = "Invalid input data",
+                Detail = validationResult.Errors.FirstOrDefault()?.ErrorMessage ?? string.Empty
+            });
+
+        var command = mapper.Map<CancelOrderItemCommand>(request);
+        var response = await mediator.Send(command, cancellationToken);
+
+        return Created(string.Empty, new ApiResponseWithData<CancelOrderItemResponse>
+        {
+            Success = true,
+            Message = "Order item cancelled successfully",
+            Data = mapper.Map<CancelOrderItemResponse>(response)
+        });
     }
 }
