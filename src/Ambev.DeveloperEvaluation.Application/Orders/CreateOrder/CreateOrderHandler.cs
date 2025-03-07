@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
@@ -6,10 +7,7 @@ using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Orders;
 
-public class CreateOrderHandler(
-    IOrderRepository repository,
-    IMapper mapper)
-    : IRequestHandler<CreateOrderCommand, CreateOrderResponse>
+public class CreateOrderHandler(IOrderRepository repository, IMapper mapper, IMediator mediator) : IRequestHandler<CreateOrderCommand, CreateOrderResponse>
 {
     public async Task<CreateOrderResponse> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
@@ -22,7 +20,10 @@ public class CreateOrderHandler(
         var order = mapper.Map<Order>(command);
         order.CalculateTotalAmount();
 
-        var orderDb = await repository.CreateAsync(order, cancellationToken);
+        Order orderDb = await repository.CreateAsync(order, cancellationToken);
+        
+        await mediator.Publish(new OrderCreatedEvent(orderDb), cancellationToken);
+        
         return mapper.Map<CreateOrderResponse>(orderDb);
     }
 }
