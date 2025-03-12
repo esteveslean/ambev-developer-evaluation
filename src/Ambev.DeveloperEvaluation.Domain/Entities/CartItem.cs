@@ -4,6 +4,17 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
 public class CartItem : BaseEntity
 {
+    //EF CORE requirements
+    public CartItem()
+    {
+    }
+    
+    public CartItem(Guid productId, int amount)
+    {
+        Amount = amount;
+        ProductId = productId;
+    }
+    
     public Guid ProductId { get; set; }
     public int Amount { get; set; }
     public Guid CartId { get; set; }

@@ -1,4 +1,6 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Common;
+﻿using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Validation;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
@@ -11,6 +13,17 @@ public class Cart(Guid userId) : BaseEntity
     private readonly List<CartItem> _products = [];
     
     public IReadOnlyCollection<CartItem> Products => _products;
+    
+    public ValidationResultDetail Validate()
+    {
+        var validator = new CartValidator();
+        var result = validator.Validate(this);
+        return new ValidationResultDetail
+        {
+            IsValid = result.IsValid,
+            Errors = result.Errors.Select(o => (ValidationErrorDetail)o)
+        };
+    }
 
     public void Update(IEnumerable<CartItem> products)
     {
@@ -43,7 +56,7 @@ public class Cart(Guid userId) : BaseEntity
     public void AddProduct(Guid productId, int quantity)
     {
         if (quantity <= 0)
-            throw new ArgumentException("Quantity must be greater than zero.");
+            throw new InvalidOperationException("Quantity must be greater than zero.");
 
         var existingProduct = _products.FirstOrDefault(p => p.ProductId == productId);
         if (existingProduct is not null)

@@ -1,10 +1,12 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Common;
+﻿using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Validation;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
 public class Order : BaseEntity
 {
-    public Guid? UserId { get; set; }
+    public Guid UserId { get; set; }
     public string OrderNumber { get; set; } = string.Empty;
     public string Branch { get; set; } = string.Empty;
     public decimal TotalAmount { get; set; }
@@ -13,6 +15,17 @@ public class Order : BaseEntity
     public DateTime? UpdatedAt { get; set; }
     
     public List<OrderItem> Items { get; set; } = [];
+    
+    public ValidationResultDetail Validate()
+    {
+        var validator = new OrderValidator();
+        var result = validator.Validate(this);
+        return new ValidationResultDetail
+        {
+            IsValid = result.IsValid,
+            Errors = result.Errors.Select(o => (ValidationErrorDetail)o)
+        };
+    }
     
     public void Update(Guid userId, decimal totalAmount, string branch, bool isCancelled)
     {
