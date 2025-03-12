@@ -13,6 +13,6 @@ public class UpdateOrderValidator : AbstractValidator<UpdateOrderRequest>
         
         RuleFor(x => x.Items).NotEmpty()
             .NotEmpty()
-            .ForEach(item => item.SetValidator(new OrderItemValidator()));
+            .ForEach(item => item.SetValidator(new OrderItemDTOValidator()));
     }
 }

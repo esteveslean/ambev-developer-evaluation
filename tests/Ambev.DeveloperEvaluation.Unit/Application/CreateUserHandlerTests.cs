@@ -141,7 +141,9 @@ public class CreateUserHandlerTests
             Email = command.Email,
             Phone = command.Phone,
             Status = command.Status,
-            Role = command.Role
+            Role = command.Role,
+            Name = command.Name,
+            Address = command.Address,
         };
 
         _mapper.Map<User>(command).Returns(user);
@@ -157,6 +159,8 @@ public class CreateUserHandlerTests
             c.Username == command.Username &&
             c.Email == command.Email &&
             c.Phone == command.Phone &&
+            c.Address == command.Address &&
+            c.Name == command.Name &&
             c.Status == command.Status &&
             c.Role == command.Role));
     }

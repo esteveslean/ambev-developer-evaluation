@@ -15,6 +15,6 @@ public class UpdateOrderValidator : AbstractValidator<UpdateOrderCommand>
         RuleFor(x => x.Items)
             .NotEmpty()
             .Must(items => items != null && items.Count != 0)
-            .ForEach(item => item.SetValidator(new OrderItemValidator()));
+            .ForEach(item => item.SetValidator(new OrderItemDTOValidator()));
     }
 }
